@@ -1,0 +1,14 @@
+{
+  "name": "tinda",
+  "version": "1.0.0",
+  "description": "Une application pour faire des campagne de mailing.",
+  "license": "LICENSE",
+  "repository": "https://github.com/mendoc/tinda.git",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cassandra-driver": "^3.5.0",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "nodemailer": "^4.6.8"
+  }
+}

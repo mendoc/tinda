@@ -1,0 +1,114 @@
+<% include parts/header %>
+    <div class="my-3 my-md-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Toutes les listes de contacts</h3>
+                        </div>
+                        <form class="card" id="form-add-list" method="post" action="/add_list">
+                            <div class="card-body">
+                                <div class="row" id="bloc-form-list">
+                                    <div class="col-md-3">
+                                        <div class="form-group pull-left">
+                                            <label class="form-label">Nom de la liste</label>
+                                            <input type="text" class="form-control" name="nom_list" placeholder="Nom de la liste" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-md-2">
+                                        <div class="form-group">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button class="btn btn-primary"><i class="fa fa-plus"></i> Créer la liste</button>
+                                            <img height="38px" class="hide" src="../assets/images/loading.gif">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-md-7">
+                                        <div class="form-group pull-right">
+                                            <label class="form-label">&nbsp;</label>
+                                            <div class="form-control-plaintext"><h4><%= addresses.length + " liste"%><%= ((addresses.length > 1) ? "s" : "")%></h4></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="table-responsive">
+                            <table class="table card-table table-vcenter text-nowrap">
+                                <thead>
+                                <tr>
+                                    <th class="w-1">No.</th>
+                                    <th>Nom de la liste</th>
+                                    <th>Nombre d'adresses</th>
+                                    <th>Date de création</th>
+                                    <th>Situation</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <%for (var ind in addresses){
+                                    var adresse = addresses[ind];
+                                    adresse = adresse.replace(".txt", "");
+                                %>
+                                <tr>
+                                    <td><span class="text-muted">001401</span></td>
+                                    <td><a href="invoice.html" class="text-inherit"><%=adresse%></a></td>
+                                    <td>
+                                        3 adresses
+                                    </td>
+                                    <td>
+                                        24 Sept. 2018
+                                    </td>
+                                    <td>
+                                        <span class="status-icon bg-success"></span> Paid
+                                    </td>
+                                    <td class="text-right">
+                                        <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Manage</a>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Actions</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a class="icon" href="javascript:void(0)">
+                                            <i class="fe fe-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <%}%>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    $(document).ready(function () {
+        $("#form-add-list").submit(function (e) {
+            e.preventDefault();
+            var bfl   = $("#bloc-form-list");
+            var table = $(".table-responsive");
+            var input = bfl.find("input");
+            var nom   = input.val();
+
+            if (nom === "") return;
+            bfl.find("button").hide();
+            bfl.find("img").show();
+
+            $.post("/add_list", {nom_list : nom}, function (data, status) {
+                bfl.find("img").hide();
+                bfl.find("button").show();
+                if (status === "success"){
+                    var row = '<tr><td><span class="text-muted">001401</span></td><td><a href="list" class="text-inherit">'+data.liste+'</a></td><td>Aucune adresse</td><td>24 Sept. 2018</td><td><span class="status-icon bg-success"></span> Paid</td><td class="text-right"><a href="javascript:void(0)" class="btn btn-secondary btn-sm">Manage</a> <div class="dropdown"><button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown">Actions</button></div></td><td><a class="icon" href="javascript:void(0)"><i class="fe fe-edit"></i></a></td></tr>';
+                    if (!data.error) {
+                        input.val("");
+                        table.find("tbody").prepend(row);
+                    }
+                }
+            })
+        });
+    });
+</script>
+<% include parts/footer %>
