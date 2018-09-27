@@ -1,7 +1,7 @@
 {
   "name": "tinda",
   "version": "1.0.0",
-  "description": "Une application pour faire des campagne de mailing.",
+  "description": "Une application pour faire des campagnes de mailing.",
   "license": "LICENSE",
   "repository": "https://github.com/mendoc/tinda.git",
   "dependencies": {
