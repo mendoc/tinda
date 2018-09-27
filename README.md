@@ -1,2 +1,2 @@
 # tinda
-Une application pour faire des campagne de mailing.
+Une application pour faire des campagnes de mailing.
