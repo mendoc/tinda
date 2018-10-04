@@ -1,24 +1,88 @@
 const bodyParser = require('body-parser');
 const fs         = require('fs');
 const express    = require('express');
-const nodemailer = require('nodemailer');
+const session    = require('express-session');
+const md5        = require('md5');
+const tinda      = require('./tinda');
+const constants  = require('./constants');
+const db         = require('./db');
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(express.static('public'));
+app.locals.base_url = constants.base_url;
+
+app.use(session({secret: constants.session_key, saveUninitialized: true, resave: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(constants.public_dir));
+app.use(function(req, res, next) {
+    app.locals.us = req.session;
+    next();
+});
 app.set('view engine', 'ejs');
+
+var sess;
 
 app.get('/', function (req, res) {
     res.render('home', {active : "home"});
 });
 
+app.get('/register', function (req, res) {
+    res.render('register');
+});
+app.post('/register', (req, res) => {
+    var name  = req.body.name;
+    var email = req.body.email;
+    var pass  = md5(req.body.pass);
+
+    db.register([name, email, pass], function (err, result) {
+        if (err) {
+            res.redirect('register');
+            sess.msg_error  = "Une erreur interne s'est produite.";
+            console.error(err.stack);
+        } else {
+            console.log(result);
+            res.redirect('login');
+        }
+    });
+});
+
 app.get('/login', function (req, res) {
     res.render('login');
 });
-
 app.post('/login', function (req, res) {
-    res.redirect('/');
+
+    var email = req.body.email;
+    var pass  = md5(req.body.pass);
+
+    db.login([email, pass], function (err, result) {
+        if (err) {
+            res.redirect('login');
+            sess.msg_error  = "Une erreur interne s'est produite.";
+            console.error(err.stack);
+        } else {
+            sess = req.session;
+            if (result.rowCount > 0){
+                var user   = result.rows[0];
+                sess.name  = user.name;
+                sess.email = user.email;
+                res.redirect('/');
+            } else{
+                sess.email_in   = email;
+                sess.msg_error  = "Adresse email ou mot de passe incorrect.";
+                res.redirect('login');
+            }
+        }
+    });
+});
+
+app.get('/logout',function(req,res){
+    req.session.destroy(function(err) {
+        if(err) {
+            console.log(err);
+        } else {
+            res.redirect('/login');
+        }
+    });
 });
 
 app.get('/list', function (req, res) {
@@ -47,43 +111,37 @@ app.get('/home/:nom', function(req, res) {
 });
 
 app.get('/mail', function(req, res) {
-    // Generate test SMTP service account from ethereal.email
-    // Only needed if you don't have a real mail account for testing
-    nodemailer.createTestAccount((err, account) => {
-        // create reusable transporter object using the default SMTP transport
-        let transporter = nodemailer.createTransport({
-            host: 'ssl0.ovh.net',
-            port: 587,
-            secure: false, // true for 465, false for other ports
-            auth: {
-                user: "dimitri@ecole241.org", // generated ethereal user
-                pass: "OlaLabs241" // generated ethereal password
+
+    var body = fs.readFileSync('public/birthday.html', 'utf8');
+
+    var data = {
+        from: constants.from,
+        subject: "Tinda, la vision en marche",
+        body: body
+    };
+
+    var dest = [
+        "ongouadimitri5@gmail.com",
+        "molakisiencyclopedie@gmail.com",
+        "ongouadimitri5@yahoo.fr",
+        "hlepa64@gmail.com"
+    ];
+
+    dest.forEach(function (email) {
+
+        tinda.mail.send(data, email, function (err, info) {
+            if (err) {
+                console.log(err);
+            }else{
+                console.log(info.response);
+                console.log(info.messageId);
+                console.log(email);
+                console.log("##################################");
             }
-        });
-
-        // setup email data with unicode symbols
-        let mailOptions = {
-            from: '"Dimitri ONGOUA 👻" <dimitri@ecole241.org>', // sender address
-            to: 'hlepa64@gmail.com, alex.mboungou@gmail.com', // list of receivers
-            subject: 'Test Tinda', // Subject line
-            text: 'Ceci est un mail de test envoyé via Tinda.', // plain text body
-            html: '<b>Ceci est un mail de test envoyé via Tinda.</b>' // html body
-        };
-
-        // send mail with defined transport object
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                return console.log(error);
-            }
-            console.log('Message sent: %s', info.messageId);
-            // Preview only available when sending through an Ethereal account
-            console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-
-            // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-            // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
         });
     });
-    //res.render('home.ejs', {floor: req.params.nom});
+
+    res.render('list.ejs', {addresses : [], active : "list"});
 });
 
 app.listen(3000, function () {

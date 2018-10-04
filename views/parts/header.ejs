@@ -84,10 +84,18 @@
                         </div>
                         <div class="dropdown">
                             <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
-                                <span class="avatar" style="background-image: url(./demo/faces/female/25.jpg)"></span>
+                                <span class="avatar" style="background-image: url(https://lh3.googleusercontent.com/_UUXdNLXAfyYL7mCXA_C_JU-Z9vOFziPdruenee8T0yo5FgCHxB03GeUkunRy4L3OVWXZlIsTBEDchj0hQu6Edcw01v-n10hK9_nAHM9pHpDQi3AOT6Wx1V6Oe9UJX3F2ZSXV_ko0FDTscV3Ut3ZZYXwSkp6TordK0PZZnnj6GcmwG7wCJ1apxZZuESc6cYqHnqYLw6i60lfj-_eS1AdOOyd1cBWYO6Ae4BlyFJMinmsod4xW-1SoOivAql4Txrmfkl2sBuQ3Mj6PUbveC4hSSU0DBYMtMPddviDZyMZJcmuVXnkpKvgyUm42oSyU4hQcn81l0cQ2Ar1nSzCOrtn9n69J-W8vwyQ5Ur0K9RFJrOEZIlkHluRDHFkBXnT882Inj7lnX1Rn-7Oj6J6t-H3qpCoKeCpzWW3vjRNqKKfDzgtq8cEMLg57fB-qNIbwvsttc93y_IJ7nWPqbnk7wwmerOJ8kbVGY621lO8COIaQs3Fc0_CWvPxo6IbyOuACfZnqapDDAkJxW_K6yydIJu5xkcm3LXyne9_dTga561rvFeMK6_RSXJ9leyrk59XB5k-f4bt983_TSjFtyr5Ji5a_CYDWW0hx2qBN74cEAJIWzjsm6wM5WzV2EU4ls5xdIYw0oHdeDZElrYfyGjb1DiVuzj8xPJ3P8iiuAD7eVjY0TnmDLZiKerNmZRn=s256-no)"></span>
                                 <span class="ml-2 d-none d-lg-block">
-                      <span class="text-default">Dimitri ONGOUA</span>
-                      <small class="text-muted d-block mt-1">Administrateur</small>
+                                  <% if (us.name) { %>
+                                        <span class="text-default"><%= us.name %></span>
+                                    <% } else { %>
+                                          <script type="text/javascript">
+                                                window.location.href = "login"
+                                          </script>
+                                    <% } %>
+
+                                    <!--small class="text-muted d-block mt-1">Administrateur</small-->
+                      <small class="text-muted d-block mt-1"></small>
                     </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
@@ -108,8 +116,8 @@
                                 <a class="dropdown-item" href="#">
                                     <i class="dropdown-icon fe fe-help-circle"></i> Need help?
                                 </a>
-                                <a class="dropdown-item" href="login">
-                                    <i class="dropdown-icon fe fe-log-out"></i> Sign out
+                                <a class="dropdown-item" href="logout">
+                                    <i class="dropdown-icon fe fe-log-out"></i> Déconnexion
                                 </a>
                             </div>
                         </div>
@@ -134,7 +142,7 @@
                     <div class="col-lg order-lg-first">
                         <ul class="nav nav-tabs border-0 flex-column flex-lg-row">
                             <li class="nav-item">
-                                <a href="." class="nav-link<%= (active === "home") ? " active" : ""%>"><i class="fe fe-pie-chart"></i> Tableau de board</a>
+                                <a href="." class="nav-link<%= (active === "home") ? " active" : ""%>"><i class="fe fe-pie-chart"></i> Tableau de bord</a>
                             </li>
                             <li class="nav-item">
                                 <a href="javascript:void(0)" class="nav-link<%= (active === "list") ? " active" : ""%>" data-toggle="dropdown"><i class="fe fe-users"></i> Contacts</a>

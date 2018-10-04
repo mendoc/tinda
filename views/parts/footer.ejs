@@ -22,5 +22,18 @@
     </div>
 </footer>
 </div>
+<script type="text/javascript">
+    function timing(count, url){
+        window.setTimeout(function(){
+            count--;
+            if(count > 0){
+                timing(count, url);
+            }else{
+                location.href = url;
+            }
+        }, 999);
+    }
+    //timing(10, 'login');
+</script>
 </body>
 </html>
