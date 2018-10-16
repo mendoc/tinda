@@ -3,9 +3,9 @@ const fs         = require('fs');
 const express    = require('express');
 const session    = require('express-session');
 const md5        = require('md5');
-const tinda      = require('./tinda');
-const constants  = require('./constants');
-const db         = require('./db');
+const tinda      = require('./inc/tinda');
+const constants  = require('./inc/constants');
+const db         = require('./inc/db');
 
 const app = express();
 
@@ -115,7 +115,6 @@ app.get('/mail', function(req, res) {
     var body = fs.readFileSync('public/birthday.html', 'utf8');
 
     var data = {
-        from: constants.from,
         subject: "Tinda, la vision en marche",
         body: body
     };
@@ -131,7 +130,7 @@ app.get('/mail', function(req, res) {
 
         tinda.mail.send(data, email, function (err, info) {
             if (err) {
-                console.log(err);
+                console.error(err);
             }else{
                 console.log(info.response);
                 console.log(info.messageId);
@@ -145,5 +144,5 @@ app.get('/mail', function(req, res) {
 });
 
 app.listen(3000, function () {
-    console.log('Tinda app running at port 3000')
+    console.log('Tinda is running at port 3000')
 });
